@@ -3,13 +3,10 @@
 namespace App\Controller\WorkflowConge;
 
 
-use App\Article\ArticleCatalogue;
-use App\Article\Source\DoctrineSource;
-use App\Article\Source\YamlSource;
-use App\Entity\Article;
-use App\Entity\Category;
-use App\Exception\DuplicateCatalogueArticleException;
-use App\Service\Article\YamlProvider;
+use App\Demande\DemandeCatalogue;
+use App\Entity\Demande;
+use App\Exception\DuplicateCatalogueDemandeException;
+use App\Service\Demande\YamlProvider;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,136 +16,72 @@ class IndexController extends Controller
     /**
      * Page d'Accueil de notre Site Internet
      * @param YamlProvider $yamlProvider
-     * @param ArticleCatalogue $catalogue
+     * @param DemandeCatalogue $catalogue
      * @return Response
      */
-    public function index(YamlProvider $yamlProvider, ArticleCatalogue $catalogue)
+    public function index()
     {
-
-        # Récupération des Articles depuis YamlProvider
-        # $articles = $yamlProvider->getArticles();
-        # dump($articles);
-        
         # Connexion au Repository
         $repository = $this->getDoctrine()
-            ->getRepository(Article::class);
+            ->getRepository(Demande::class);
 
-        # Récupération des articles depuis le composant YamlProvider dans un fichier Yaml situé dans le dossier Service
-        # $articles = $catalogue->findAll();
-
-        # Récupération des articles depuis la BDD
-        # $articles = $repository->findAll();
-        
-        $articles = $repository->findArticlesByStatus("published");
-
-        # return new Response("<html><body><h1>PAGE D'ACCUEIL</h1></body></html>");
-        return $this->render('index/index.html.twig', [
-            'articles' => $articles
-        ]);
-    }
-
-    /**
-     * Afficher les Articles d'une Catégorie
-     * @Route({
-     *     "fr": "/categorie/{category<\w+>}",
-     *     "en": "/category/{category<\w+>}"
-     * },
-     *  name="index_category",
-     *     methods={"GET"},
-     *     defaults={"category":"tout"})
-     * @param $category
-     * @return Response
-     */
-    public function category($category)
-    {
-        # Récupération de la catégorie
-        $category = $this->getDoctrine()
-            ->getRepository(Category::class)
-            ->findOneBy(['slug' => $category]);
-
-        # Si la catégorie est null, on redirige l'utilisateur
-        if (null === $category) {
-            return $this->redirectToRoute('index', [], Response::HTTP_MOVED_PERMANENTLY);
+        if ($this->getUser()) {
+            $demandes = $repository->findAuthorDemandeByStatus($this->getUser()->getId(), "published");
+        } else {
+            $demandes = [];
         }
-
-        # Récupérer les articles de la catégorie
-        $articles = $category->getArticles();
-
-        # return new Response("<html><body><h1>PAGE CATEGORIE : $category</h1></body></html>");
-        return $this->render('index/category.html.twig', [
-            'category' => $category,
-            'articles' => $articles
+        
+        return $this->render('index/index.html.twig', [
+            'demandes' => $demandes
         ]);
     }
 
     /**
-     * Affiche un Article
-     * @Route("/{_locale}/{category}/{slug}_{id<\d+>}.html",
-     *     name="index_article")
-     * @param ArticleCatalogue $catalogue
+     * Affiche un Demande
+     * @Route("/{slug}_{id<\d+>}.html",
+     *     name="index_demande")
      * @param $id
      * @return Response
-     * @internal param Article $article
+     * @internal param Demande $Demande
      */
-    public function article(ArticleCatalogue $catalogue, $id)
-    {
-        #public function article(Article $article = null, $id)
+    public function Demande($id)
+    {   
+        # Connexion au Repository
+        $repository = $this->getDoctrine()
+                ->getRepository(Demande::class);
 
-        # Récupération de mon Article depuis la BDD
-        # $article = $this->getDoctrine()
-        #     ->getRepository(Article::class)
-        #     ->find($id);
+        $demande = $repository->find($id); 
 
-        #if (null === $article) {
-
-            # On génère une exception...
-            #    throw $this->createNotFoundException(
-            #        'Nous n\'avons pas trouvé votre article ID : ' . $id
-            #    );
-
-            # Ou, on peut rediriger l'utilisateur sur la page index
-        #    return $this->redirectToRoute('index', [], Response::HTTP_MOVED_PERMANENTLY);
-
-        #}
-
-        try {
-            $article = $catalogue->find($id);
-        } catch (DuplicateCatalogueArticleException $catalogueArticleException) {
-            return $this->redirectToRoute('index', [], Response::HTTP_MOVED_PERMANENTLY);
-        }
-
-        # /business/une-formation-symfony-a-paris_8796456.html
         # Transmission des données à la vue
-        return $this->render('index/article.html.twig', [
-            'article' => $article
+        return $this->render('index/Demande.html.twig', [
+            'demande' => $demande
         ]);
     }
 
     /**
      * Génération de la Sidebar
-     * @param Article|null $article
-     * @param ArticleCatalogue $catalogue
+     * @param Demande|null $Demande
      * @return Response
      */
-    public function sidebar(?Article $article = null, ArticleCatalogue $catalogue) {
+    public function sidebar(?Demande $Demande = null) {
 
         # Récupération du Répository
-        //$repository = $this->getDoctrine()->getRepository(Article::class);
+        //$repository = $this->getDoctrine()->getRepository(Demande::class);
 
-        # Récupération des 5 derniers articles avec le composant YamlProvider dans un fichier Yaml situé dans le dossier Service
-        # $articles = $catalogue->findLastFiveArticles();
+        # Récupération des 5 derniers Demandes avec le composant YamlProvider dans un fichier Yaml situé dans le dossier Service
+        # $Demandes = $catalogue->findLastFiveDemandes();
 
-        # Récupération des 5 derniers articles
-        //$articles = $repository->findLastFiveArticles();
+        # Récupération des 5 derniers Demandes
+        //$Demandes = $repository->findLastFiveDemandes();
 
-        # Récupérations des articles à la position "special" dans la BDD
-        //$specials = $repository->findSpecialArticles();
+        # Récupérations des Demandes à la position "special" dans la BDD
+        //$specials = $repository->findSpecialDemandes();
 
         # Rendu de la vue
         /*return $this->render('components/_sidebar.html.twig', [
-            'articles' => $articles,
+            'Demandes' => $Demandes,
             'specials' => $specials,
-            'article' => $article
+            'Demande' => $Demande
         ]);*/
 
         return $this->render('components/_sidebar.html.twig');

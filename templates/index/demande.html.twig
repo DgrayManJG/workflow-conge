@@ -1,0 +1,63 @@
+{% extends 'layout.html.twig' %}
+
+{% set active = demande.slug %}
+
+{% block page_title %}
+    {{ demande.title | title }}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <!--colleft-->
+        <div class="col-md-8 col-sm-12">
+
+            {% for message in app.flashes('notice') %}
+                <div class="alert alert-info">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            <!--post-detail-->
+            <article class="post-detail">
+                <h3>{{ demande.user.firstname }} {{ demande.user.lastname }} souhaite un congé du {{ demande.dateCongeDebut | date('d/m/Y') }} au {{ demande.dateCongeFin | date('d/m/Y') }}</h3>
+                <br>
+                <h5>Total de jour demander : {{ demande.days }}  {% if demande.days > 1 %}jours ouvrés{% else %}jour ouvré{% endif %}</h5>
+            
+                <h3>{{ demande.title | title }}</h3>
+                <div class="meta-post">
+                    <a href="javascript:void(0)">
+                        {{ demande.user.firstname ~ ' ' ~ demande.user.lastname }}
+                    </a>
+                    <em></em>
+                    <span>
+                        {{ demande.createdDate | date('d/m/Y') }}
+                    </span>
+                </div>
+
+                {% if demande.featuredImage is null %}
+                    <p>Aucun document d'upload</p>
+                {% else %}
+                    {# <img alt="{{ demande.title }}" src="{{ asset('images/product/'~demande.featuredImage) }}"> #}
+                    <a href="{{ asset('images/product/'~demande.featuredImage) }}" target="_blank">Document joint</a>
+                {% endif %}
+                
+                
+                {{ demande.content | raw }}
+            
+                <br><br>
+
+                {% if demande.observation is empty %}
+                    <p>Pas d'observation du responsable pour le moment</p>
+                {% else %}
+                    <p class="text-danger">Observation de votre responsable : {{ demande.observation }}</p>
+                {% endif %}
+
+            </article>
+
+            
+        </div>
+        {{ render(controller('App\\Controller\\WorkflowConge\\IndexController::sidebar', { 'demande' : demande } )) }}
+    </div>
+{% endblock %}
+
+

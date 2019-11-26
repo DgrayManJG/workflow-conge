@@ -55,13 +55,13 @@ class User implements UserInterface
     private $roles;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Article", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="App\Entity\Demande", mappedBy="user")
      */
-    private $articles;
+    private $demandes;
 
     public function __construct()
     {
-        $this->articles = new ArrayCollection();
+        $this->demandes = new ArrayCollection();
         $this->registrationDate = new \DateTime();
     }
 
@@ -175,9 +175,9 @@ class User implements UserInterface
     /**
      * @return mixed
      */
-    public function getArticles()
+    public function getdemandes()
     {
-        return $this->articles;
+        return $this->demandes;
     }
 
 

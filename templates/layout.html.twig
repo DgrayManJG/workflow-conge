@@ -1,7 +1,5 @@
 {% extends "base.html.twig" %}
 
-{#{% set categories = category_service.findAll() %}#}
-{% set categories = getCategories() %}
 
 {% block stylesheets %}
     <!-- Favicons -->
@@ -12,7 +10,7 @@
     <!-- Online Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Oswald:300,400,700&subset=latin-ext" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i"
-          rel="stylesheet">
+            rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:100,300,400,700" rel="stylesheet">
     <!-- Vender -->
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
@@ -34,7 +32,6 @@
 
 {% block body %}
 
-    {#{{ dump(categories) }}#}
 
     <!--preload-->
     <div class="loader" id="page-loader">
@@ -45,7 +42,7 @@
 
     {% block content '' %}
 
-    {% include 'components/_footer.html.twig' %}
+    {#{% include 'components/_footer.html.twig' %}#}
 
 
 {% endblock %}

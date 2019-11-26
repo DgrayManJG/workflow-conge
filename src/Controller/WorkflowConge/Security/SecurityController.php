@@ -50,13 +50,11 @@ class SecurityController extends Controller
     }
 
     /**
-     * @Route({
-     *     "fr": "/deconnexion",
-     *     "en": "/logout"
-     * }, name="security_logout")
+     * @Route("/logout", name="security_logout", methods={"GET"})
      */
     public function logout()
     {
+        
     }
 
     /**

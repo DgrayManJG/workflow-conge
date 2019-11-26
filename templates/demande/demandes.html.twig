@@ -1,0 +1,186 @@
+{% extends "layout.html.twig" %}
+
+{% block page_title %}
+    {{ title | title }}
+{% endblock %}
+
+{% set active = title %}
+
+{% block content %}
+    {#{{ dump(app.request) }}#}
+    <div class="row">
+        <!--colleft-->
+        <div class="col-md-8 col-sm-12">
+
+            {% for message in app.flashes('notice') %}
+                <div class="alert alert-info">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            <div class="box-caption">
+                <span>{{ title }}</span>
+            </div>
+            <br>
+
+            {% if demandes is not empty %}
+                <!--list-news-cate-->
+                <div class="list-news-cate">
+                    {% for demande in demandes %}
+                        <article class="news-cate-item">
+                            <div class="row">
+                                
+                                <div class="col-md-5 col-sm-5 col-xs-12">
+                                    <h3>{{ demande.user.firstname }} {{ demande.user.lastname }} souhaite un congé du {{ demande.dateCongeDebut | date('d/m/Y') }} au {{ demande.dateCongeFin | date('d/m/Y') }}</h3>
+                                    <br>
+                                    <h5>Total de jour demander : {{ demande.days }}  {% if demande.days > 1 %}jours ouvrés{% else %}jour ouvré{% endif %}</h5>
+                                    <a href="{{ path('index_demande', {
+                                        'slug'      : demande.slug,
+                                        'id'        : demande.id
+                                    }) }}">
+
+                                        
+
+                                    </a>
+                                </div>
+                                <div class="col-md-7 col-sm-7 col-xs-12">
+                                    <h3><a href="{{ path('index_demande', {
+                                            'slug'      : demande.slug,
+                                            'id'        : demande.id
+                                        }) }}">{{ demande.title }}</a></h3>
+                                    <div class="meta-post">
+                                        <a href="#">
+                                            {{ demande.user.firstname ~ ' ' ~ demande.user.lastname }}
+                                        </a>
+                                        <em></em>
+                                        <span>
+                                            {{ demande.createdDate | date('d/m/Y') }}
+                                        </span>
+                                    </div>
+                                        {% if demande.content is empty %}
+                                            <p>Aucun commentaire du demandeur pour le moment</p>
+                                        {% else %}
+                                            Commentaire du demandeur : {{ demande.content | summary }}
+                                        {% endif %}
+
+                                        <br>
+
+                                        {% if demande.featuredImage is null %}
+                                            <p>Aucun document d'upload</p>
+                                        {% else %}
+                                            {# <img alt="{{ demande.title }}" src="{{ asset('images/product/'~demande.featuredImage) }}"> #}
+                                            Un document joint : <a href="{{ asset('images/product/'~demande.featuredImage) }}" target="_blank">cliquez</a>
+                                        {% endif %}
+
+                                        <br>
+
+                                        {% if demande.observation is empty %}
+                                            <p>Pas d'observation du responsable pour le moment</p>
+                                        {% else %}
+                                            <p class="text-danger">Observation de votre responsable : {{ demande.observation }}</p>
+                                        {% endif %}
+                                </div>
+                                <div class="col-xs-12">
+                                    <br>
+                                    {% if is_granted('ROLE_AUTHOR') %}
+                                        {% if workflow_can(demande, 'to_approval') %}
+                                            <a class="btn btn-primary" href="{{ path('demande_workflow', {
+                                                'id' : demande.id,
+                                                'status' : 'to_approval',
+                                                'redirect' : app.request.get('_route')
+                                            }) }}">
+                                                {{ 'Envoyer à votre responsable' | trans }}
+                                            </a>
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if is_granted('ROLE_EDITOR') %}
+                                        {% if workflow_can(demande, 'editor_approuved') and workflow_can(demande, 'editor_fail') and workflow_can(demande, 'editor_refused') %}
+                                            {#<a class="btn btn-primary" href="{{ path('demande_workflow', {
+                                                'id' : demande.id,
+                                                'status' : 'to_approval',
+                                                'redirect' : app.request.get('_route')
+                                            }) }}">
+                                                {{ 'Envoyer au rédacteur en chef' | trans }}
+                                            </a>#}
+                                            {% if demande.observation is empty %}
+                                                <form class="form-horizontal" method="POST" action="{{ path('addObservation') }}">
+                                                    <input type="hidden" name="idDemande" value="{{ demande.id }}"></input>
+                                                    <div class="form-group"> 
+                                                        <label>Voulez-vous ajouter une observation avant de réaliser une action ?</label>
+                                                        <textarea id="observation_demande" name="observation_demande" class="form-control"></textarea>  
+                                                    </div>
+                                                    <input type="submit" />
+                                                </form>
+                                            {% else %}
+                                                <a class="btn btn-success" href="{{ path('demande_workflow', {
+                                                    'id' : demande.id,
+                                                    'status' : 'editor_approuved',
+                                                    'redirect' : app.request.get('_route')
+                                                }) }}">
+                                                    {{ 'Valider la demande' | trans }}
+                                                </a>
+
+                                                <a class="btn btn-warning" href="{{ path('demande_workflow', {
+                                                    'id' : demande.id,
+                                                    'status' : 'editor_fail',
+                                                    'redirect' : app.request.get('_route')
+                                                }) }}">
+                                                    {{ 'Renvoyer pour correction' | trans }}
+                                                </a>
+
+                                                <a class="btn btn-danger" href="{{ path('demande_workflow', {
+                                                    'id' : demande.id,
+                                                    'status' : 'editor_refused',
+                                                    'redirect' : app.request.get('_route')
+                                                }) }}">
+                                                    {{ 'Refuser et Annuler' | trans }}
+                                                </a>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %}
+                            
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+
+                <div class="alert alert-danger">
+                    <strong>Aucune demande pour le moment</strong>
+                </div>
+
+            {% endif %}
+
+        </div>
+
+        {{ render(controller('App\\Controller\\WorkflowConge\\IndexController::sidebar')) }}
+
+    </div>
+
+
+    <script>
+
+
+        $.ajax({
+                async: true,
+                url: "{{ path('addObservation') }}",
+                type: "POST",
+                dataType: "json",
+                data: {date: date, idHub: idHub},
+                success : function(result, statut){
+                    
+
+                }
+
+            })
+    </script>
+{% endblock %}
+
+

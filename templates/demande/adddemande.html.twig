@@ -1,0 +1,156 @@
+{% extends "layout.html.twig" %}
+
+{% set active = 'addarticle' %}
+
+{% block page_title %}
+    Nouvelle demande de congé
+{% endblock %}
+
+{% block content %}
+
+    {% for message in app.flashes('notice') %}
+        <div class="alert alert-success alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            {{ message }}
+        </div>
+    {% endfor %}
+
+    <div class="row">
+        <div class="col-xs-10 col-xs-offset-1">
+            <h3>Rédiger un Article</h3>
+            {#{% form_theme form 'bootstrap_3_layout.html.twig' %}#}
+            {#{{ form(form, {attr: {novalidate: 'novalidate'}}) }}#}
+
+            {{ form_start(form) }}
+                {{ form_errors(form) }}
+
+                {{ form_row(form.title) }}
+                {{ form_row(form.content) }}
+
+                <div class="row">
+                    <div class="col-md-4">
+                        {{ form_row(form.dateCongeDebut) }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ form_row(form.dateCongeFin) }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ form_row(form.days) }}
+                    </div>
+                </div>
+
+
+                {{ form_row(form.ifEvenementFamilial) }}
+
+                <div class="ifCheckEvenementFamille">
+                    {{ form_row(form.joursEvenementFamilial) }}
+                    {{ form_row(form.natureEvenementFamilial) }}
+                    {{ form_row(form.dateEvenementFamilial) }}
+                    {{ form_row(form.featuredImage) }}
+                </div>
+
+                {{ form_row(form.ifCongePaye) }}
+                
+                <div class="ifCheckCongePaye">
+                    {{ form_row(form.joursCongePaye) }}
+                </div>
+
+                {{ form_row(form.ifRtt) }}
+
+                <div class="ifCheckRtt">
+                    {{ form_row(form.janvier) }}
+                    {{ form_row(form.fevrier) }}
+                    {{ form_row(form.mars) }}
+                    {{ form_row(form.avril) }}
+                    {{ form_row(form.mai) }}
+                    {{ form_row(form.juin) }}
+                    {{ form_row(form.juillet) }}
+                    {{ form_row(form.aout) }}
+                    {{ form_row(form.septembre) }}
+                    {{ form_row(form.octobre) }}
+                    {{ form_row(form.novembre) }}
+                    {{ form_row(form.decembre) }}
+                </div>
+
+                {{ form_row(form.ifCongeSansSolde) }}
+
+                <div class="ifCheckCongeSansSolde">
+                    {{ form_row(form.joursCongeSansSolde) }}
+                </div>
+                
+                {{ form_row(form.ifAutre) }}
+
+                <div class="ifCheckAutre">
+                    {{ form_row(form.joursAutre) }}
+                </div>
+
+                {{ form_row(form.submit) }}
+            {{ form_end(form) }}
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block final_javascripts %}
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+            $(".ifCheckEvenementFamille").hide();
+            $(".ifCheckCongePaye").hide();
+            $(".ifCheckRtt").hide();
+            $(".ifCheckCongeSansSolde").hide();
+            $(".ifCheckAutre").hide();
+        });
+
+        $('[name="demande[ifEvenementFamilial]"]').change(function()
+        {
+            if ($(this).is(':checked')) {
+                $(".ifCheckEvenementFamille").show();
+            } else {
+                $(".ifCheckEvenementFamille").hide();
+            }
+        });
+
+        $('[name="demande[ifCongePaye]"]').change(function()
+        {
+            if ($(this).is(':checked')) {
+                $(".ifCheckCongePaye").show();
+            } else {
+                $(".ifCheckCongePaye").hide();
+            }
+        });
+
+        $('[name="demande[ifRtt]"]').change(function()
+        {
+            if ($(this).is(':checked')) {
+                $(".ifCheckRtt").show();
+            } else {
+                $(".ifCheckRtt").hide();
+            }
+        });
+
+        $('[name="demande[ifCongeSansSolde]"]').change(function()
+        {
+            if ($(this).is(':checked')) {
+                $(".ifCheckCongeSansSolde").show();
+            } else {
+                $(".ifCheckCongeSansSolde").hide();
+            }
+        });
+
+        $('[name="demande[ifAutre]"]').change(function()
+        {
+            if ($(this).is(':checked')) {
+                $(".ifCheckAutre").show();
+            } else {
+                $(".ifCheckAutre").hide();
+            }
+        });
+    </script>
+{% endblock %}
+

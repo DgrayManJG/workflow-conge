@@ -20,6 +20,7 @@
 {#{{ dump(app.user) }}#}
 
 <div class="row">
+    <h2>Liste de vos demandes validées</h2>
     <!--colleft-->
     <div class="col-md-8 col-sm-12">
 
@@ -27,32 +28,40 @@
         <section class="spotlight-thumbs">
             <div class="row grid">
                 <div class="grid-sizer"></div>
-                {% for article in articles %}
-                    <div class="col-md-4 col-sm-4 col-xs-12 grid-item">
+                {% for demande in demandes %}
+                    <div class="col-md-6 col-sm-6 col-xs-12 grid-item">
+
+                        <h3>{{ demande.user.firstname }} {{ demande.user.lastname }} à obtenu un congé du {{ demande.dateCongeDebut | date('d/m/Y') }} au {{ demande.dateCongeFin | date('d/m/Y') }}</h3>
+                        <br>
+                        <h5>Total de jour demander : {{ demande.days }}  {% if demande.days > 1 %}jours ouvrés{% else %}jour ouvré{% endif %}</h5>
+    
                         <div class="spotlight-item-thumb">
                             <div class="spotlight-item-thumb-img">
-                                <a href="{{ path('index_article', {
-                                    'category'  : article.category.slug,
-                                    'slug'      : article.slug,
-                                    'id'        : article.id
+                                <a href="{{ path('index_demande', {
+                                    'slug'      : demande.slug,
+                                    'id'        : demande.id
                                 }) }}">
-                                    <img alt="{{ article.title }}" src="{{ asset('images/product/'~article.featuredImage) }}"/>
+
+                                    {% if demande.featuredImage is null %}
+                                        <p>Aucun document d'upload</p>
+                                    {% else %}
+                                        {# <img alt="{{ demande.title }}" src="{{ asset('images/product/'~demande.featuredImage) }}"> #}
+                                        <a href="{{ asset('images/product/'~demande.featuredImage) }}" target="_blank">Document joint</a>
+                                    {% endif %}
+                                    
                                 </a>
-                                <a href="{{ path('index_category', {
-                                    'category' : article.category.slug }) }}" class="cate-tag">{{ article.category.name }}</a>
                             </div>
-                            <h3><a href="{{ path('index_article', {
-                                    'category'  : article.category.slug,
-                                    'slug'      : article.slug,
-                                    'id'        : article.id
-                                }) }}">{{ article.title | title }}</a></h3>
+                            <h3><a href="{{ path('index_demande', {
+                                    'slug'      : demande.slug,
+                                    'id'        : demande.id
+                                }) }}">{{ demande.title | title }}</a></h3>
                             <div class="meta-post">
                                 <a href="javascript:void(0)">
-                                    {{ article.user.firstname ~ ' ' ~ article.user.lastname }}
+                                    {{ demande.user.firstname ~ ' ' ~ demande.user.lastname }}
                                 </a>
                                 <em></em>
                                 <span>
-                                    {{ article.createdDate | date('d/m/Y') }}
+                                    {{ demande.createdDate | date('d/m/Y') }}
                                 </span>
                             </div>
                         </div>

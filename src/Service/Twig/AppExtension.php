@@ -9,7 +9,7 @@
 namespace App\Service\Twig;
 
 
-use App\Entity\Article;
+use App\Entity\Demande;
 use App\Entity\Category;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -82,30 +82,30 @@ class AppExtension extends AbstractExtension
         return [
             new \Twig_Function('getCategories', function () {
                 return $this->em->getRepository(Category::class)
-                    ->findCategoriesHavingArticles();
+                    ->findCategoriesHavingDemandes();
             }),
             new \Twig_Function('isUserInvited', function () {
                 return $this->session->get('inviteUserModal');
             }),
-            new \Twig_Function('pendingArticles', function () {
-                return $this->em->getRepository(Article::class)
-                    ->countAuthorArticlesByStatus($this->user->getId(), 'review');
+            new \Twig_Function('pendingDemandes', function () {
+                return $this->em->getRepository(Demande::class)
+                    ->countAuthorDemandesByStatus($this->user->getId(), 'review');
             }),
-            new \Twig_Function('publishedArticles', function () {
-                return $this->em->getRepository(Article::class)
-                    ->countAuthorArticlesByStatus($this->user->getId(), 'published');
+            new \Twig_Function('publishedDemandes', function () {
+                return $this->em->getRepository(Demande::class)
+                    ->countAuthorDemandesByStatus($this->user->getId(), 'published');
             }),
-            new \Twig_Function('approvalArticles', function () {
-                return $this->em->getRepository(Article::class)
-                    ->countArticlesByStatus('editor');
+            new \Twig_Function('approvalDemandes', function () {
+                return $this->em->getRepository(Demande::class)
+                    ->countDemandesByStatus('editor');
             }),
-            new \Twig_Function('correctorArticles', function () {
-                return $this->em->getRepository(Article::class)
-                    ->countArticlesByStatus('corrector');
+            new \Twig_Function('correctorDemandes', function () {
+                return $this->em->getRepository(Demande::class)
+                    ->countDemandesByStatus('corrector');
             }),
-            new \Twig_Function('publisherArticles', function () {
-                return $this->em->getRepository(Article::class)
-                    ->countArticlesByStatus('publisher');
+            new \Twig_Function('publisherDemandes', function () {
+                return $this->em->getRepository(Demande::class)
+                    ->countDemandesByStatus('publisher');
             })
         ];
     }

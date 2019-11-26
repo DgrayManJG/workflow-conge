@@ -28,7 +28,7 @@ security:
                 password_parameter: app_login[password]
             provider: user_provider
             logout:
-                path: /deconnexion
+                path: /logout
                 target: /
 
 
@@ -41,6 +41,4 @@ security:
     role_hierarchy:
         ROLE_AUTHOR: ROLE_USER
         ROLE_EDITOR: ROLE_AUTHOR
-        ROLE_CORRECTOR: ROLE_AUTHOR
-        ROLE_PUBLISHER: [ROLE_EDITOR, ROLE_CORRECTOR]
-        ROLE_ADMIN: ROLE_PUBLISHER
+        ROLE_ADMIN: ROLE_EDITOR
